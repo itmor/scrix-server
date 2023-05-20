@@ -17,6 +17,7 @@ class CreateGeneratorImageResourceTable extends Migration
             $table->id();
             $table->string('original_link');
             $table->unsignedInteger('iteration_amount');
+            $table->boolean('in_process')->default(false);
             $table->date('date');
         });
     }
