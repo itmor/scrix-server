@@ -31,13 +31,19 @@ class GeneratorController extends Controller
     public function addResource(Request $request, ImageUploadService $imageUploadService)
     {
         $imageBase64 = $request->input('imageBase64');
+        $imageOriginalUrl = $request->input('imageUrl');
         $iterationAmount = $request->input('iterationAmount');
 
-        $imageUrl = $imageUploadService->uploadImage($imageBase64);
+        if (!$imageOriginalUrl) {
+            $imageUrl = $imageUploadService->uploadImage($imageBase64);
 
-        if (!$imageUrl) {
-            return response()->json(['error' => 'Failed to upload image resource from service'], 500);
+            if (!$imageUrl) {
+                return response()->json(['error' => 'Failed to upload image resource from service'], 500);
+            }
+        } else {
+            $imageUrl = $imageOriginalUrl;
         }
+
 
         $product = new GeneratorImageResourceModel();
         $product->iteration_amount = (int)$iterationAmount;
