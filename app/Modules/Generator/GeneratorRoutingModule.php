@@ -17,6 +17,8 @@ class GeneratorRoutingModule extends ServiceProvider
             ->group(function () {
                 /** @see GeneratorController::load() */
                 Route::post('load', 'GeneratorController@load');
+                /** @see GeneratorController::getImages) */
+                Route::post('get_images', 'GeneratorController@getImages');
                 /** @see GeneratorController::addResource() */
                 Route::post('add_resource', 'GeneratorController@addResource');
                 /** @see GeneratorController::getResource() */

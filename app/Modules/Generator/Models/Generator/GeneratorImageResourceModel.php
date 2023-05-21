@@ -50,8 +50,10 @@ class GeneratorImageResourceModel extends Model
     {
         return [
             'id' => $this->id,
-            'original_link' => $this->original_link,
-            'date' => $this->date
+            'originalLink' => $this->original_link,
+            'date' => $this->date,
+            'iterationAmount' => $this->iteration_amount,
+            'iterationCount' => $this->images()->count()
         ];
     }
 

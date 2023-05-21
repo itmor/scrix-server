@@ -14,11 +14,18 @@ class GeneratorController extends Controller
 
     public function load()
     {
-        $models = GeneratorImageResourceModel::with('images')->ofInProcess(true)->get();
-       return $models->map(function (GeneratorImageResourceModel $model) {
-            return array_merge($model->toArray(), ['images' => $model->images]);
-        });
+        return GeneratorImageResourceModel::with('images')->get();
+    }
 
+    public function getImages(Request $request)
+    {
+        $imageResourceId = $request->input('imageResourceId');
+        $imageRecourseModel = GeneratorImageResourceModel::findOrFail($imageResourceId);
+
+        if (!$imageRecourseModel) {
+            return response()->json(['error' => 'Failed to get image resource item'], 500);
+        }
+        return $imageRecourseModel->images;
     }
 
     public function addResource(Request $request, ImageUploadService $imageUploadService)
@@ -57,8 +64,8 @@ class GeneratorController extends Controller
 
     {
         $imageBase64 = $request->input('imageBase64');
-        $imageRecourseId = $request->input('imageRecourseId');
-        $imageRecourseModel = GeneratorImageResourceModel::findOrFail($imageRecourseId);
+        $imageResourceId = $request->input('imageResourceId');
+        $imageRecourseModel = GeneratorImageResourceModel::findOrFail($imageResourceId);
 
 
         if (!$imageRecourseModel) {

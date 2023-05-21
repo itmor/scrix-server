@@ -32,7 +32,7 @@ class GeneratorImageModel extends Model
     {
         return [
             'id' => $this->id,
-            'original_link' => $this->original_link,
+            'originalLink' => $this->original_link,
             'date' => $this->date,
         ];
     }
