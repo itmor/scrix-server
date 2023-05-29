@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Generator\Models\Generator\GeneratorImageModel;
 use App\Modules\Generator\Models\Generator\GeneratorImageResourceModel;
 use App\Modules\Generator\Services\ImageUploadService;
+use Illuminate\Support\Facades\DB;
 
 
 class GeneratorController extends Controller
@@ -14,7 +15,9 @@ class GeneratorController extends Controller
 
     public function load()
     {
-        return GeneratorImageResourceModel::with('images')->get();
+        return GeneratorImageResourceModel::with('images')
+            ->orderBy('date', 'desc')
+            ->get();
     }
 
     public function getImages(Request $request)
@@ -94,5 +97,28 @@ class GeneratorController extends Controller
         $model->save();
 
         return $model->original_link;
+    }
+
+    public function removeResource(Request $request)
+    {
+        $imageResourceId = $request->input('imageResourceId');
+        $imageRecourseModel = GeneratorImageResourceModel::findOrFail($imageResourceId);
+        $imageRecourseModel->images()->delete();
+        $imageRecourseModel->delete();
+    }
+
+    public function fixSession()
+    {
+        $models = GeneratorImageResourceModel::whereHas('images', function ($query) {
+            $query->where('iteration_amount', '>', 1);
+        })
+            ->where('iteration_amount', '>', DB::raw('(SELECT COUNT(*) FROM images WHERE generator_image.generator_image_resource_id = generator_image_resource.id)'))
+            ->where('in_process', true)
+            ->with('images')
+            ->get();
+
+        $models->each(function ($model) {
+            $model->update(['in_process' => false]);
+        });
     }
 }
