@@ -109,6 +109,7 @@ class GeneratorController extends Controller
 
     public function fixSession()
     {
+        // todo add realization
         $models = GeneratorImageResourceModel::whereHas('images', function ($query) {
             $query->where('iteration_amount', '>', 1);
         })
