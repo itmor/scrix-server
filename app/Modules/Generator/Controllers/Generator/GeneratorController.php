@@ -2,18 +2,19 @@
 
 namespace App\Modules\Generator\Controllers\Generator;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Modules\Generator\Models\Generator\GeneratorImageModel;
 use App\Modules\Generator\Models\Generator\GeneratorImageResourceModel;
-use App\Modules\Generator\Services\ImageUploadService;
-use Illuminate\Support\Facades\DB;
+use App\Modules\Generator\Services\FirebaseStorageService;
 
 
 class GeneratorController extends Controller
 {
 
     public function load()
+
     {
         return GeneratorImageResourceModel::with('images')
             ->orderBy('date', 'desc')
@@ -31,14 +32,14 @@ class GeneratorController extends Controller
         return $imageRecourseModel->images;
     }
 
-    public function addResource(Request $request, ImageUploadService $imageUploadService)
+    public function addResource(Request $request, FirebaseStorageService $imageUploadService)
     {
         $imageBase64 = $request->input('imageBase64');
         $imageOriginalUrl = $request->input('imageUrl');
         $iterationAmount = $request->input('iterationAmount');
 
         if (!$imageOriginalUrl) {
-            $imageUrl = $imageUploadService->uploadImage($imageBase64);
+            $imageUrl = $imageUploadService->uploadBase64File($imageBase64);
 
             if (!$imageUrl) {
                 return response()->json(['error' => 'Failed to upload image resource from service'], 500);
@@ -69,7 +70,7 @@ class GeneratorController extends Controller
     }
 
 
-    public function addImage(Request $request, ImageUploadService $imageUploadService)
+    public function addImage(Request $request, FirebaseStorageService $imageUploadService)
 
     {
         $imageBase64 = $request->input('imageBase64');
@@ -81,7 +82,7 @@ class GeneratorController extends Controller
             return response()->json(['error' => 'Failed to get image resource item'], 500);
         }
 
-        $imageUrl = $imageUploadService->uploadImage($imageBase64);
+        $imageUrl = $imageUploadService->uploadBase64File($imageBase64);
 
         if (!$imageUrl) {
             return response()->json(['error' => 'Failed to upload image from service'], 500);

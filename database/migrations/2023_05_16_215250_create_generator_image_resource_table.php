@@ -15,7 +15,7 @@ class CreateGeneratorImageResourceTable extends Migration
     {
         Schema::create('generator_image_resource', function (Blueprint $table) {
             $table->id();
-            $table->string('original_link');
+            $table->text('original_link');
             $table->unsignedInteger('iteration_amount');
             $table->boolean('in_process')->default(false);
             $table->date('date');

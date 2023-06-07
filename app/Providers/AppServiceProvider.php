@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Modules\Generator\Services\ImageUploadService;
+use App\Modules\Generator\Services\FirebaseStorageService;
 use Illuminate\Support\ServiceProvider;
 use App\Modules\Generator\GeneratorModule;
 
@@ -17,8 +17,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->register(GeneratorModule::class);
 
-        $this->app->singleton(ImageUploadService::class, function () {
-            return new ImageUploadService(config('app.imageBB.apiKey'), config('app.imageBB.apiHost'));
+        $this->app->singleton(FirebaseStorageService::class, function () {
+            return new FirebaseStorageService();
         });
     }
 
