@@ -27,6 +27,8 @@ class GeneratorRoutingModule extends ServiceProvider
                 Route::post('add_image', 'GeneratorController@addImage');
                 /** @see GeneratorController::removeResource() */
                 Route::post('remove_resource', 'GeneratorController@removeResource');
+                /** @see GeneratorController::fixSession() */
+                Route::post('fix_session', 'GeneratorController@fixSession');
             });
     }
 }

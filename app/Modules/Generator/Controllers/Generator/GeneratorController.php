@@ -110,17 +110,21 @@ class GeneratorController extends Controller
 
     public function fixSession()
     {
-        // todo add realization
         $models = GeneratorImageResourceModel::whereHas('images', function ($query) {
-            $query->where('iteration_amount', '>', 1);
+            $query->where('generator_image.generator_image_resource_id', '=', DB::raw('generator_image_resource.id'))
+                ->where('generator_image_resource.iteration_amount', '>', 1);
         })
-            ->where('iteration_amount', '>', DB::raw('(SELECT COUNT(*) FROM images WHERE generator_image.generator_image_resource_id = generator_image_resource.id)'))
+            ->where('iteration_amount', '>', DB::raw('(SELECT COUNT(*) FROM generator_image WHERE generator_image.generator_image_resource_id = generator_image_resource.id)'))
             ->where('in_process', true)
             ->with('images')
             ->get();
 
         $models->each(function ($model) {
-            $model->update(['in_process' => false]);
+            $model->in_process = false;
+            $model->save();
         });
+
+
+        return response()->json(['result' => true]);
     }
 }
