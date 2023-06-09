@@ -65,7 +65,10 @@ class GeneratorController extends Controller
         }
 
         $model->in_process = true;
+
         $model->save();
+
+        $model->iteration_amount = $model->iteration_amount - $model->images->count();
         return $model;
     }
 
@@ -100,10 +103,19 @@ class GeneratorController extends Controller
         return $model->original_link;
     }
 
-    public function removeResource(Request $request)
+    public function removeResource(Request $request, FirebaseStorageService $imageUploadService)
     {
         $imageResourceId = $request->input('imageResourceId');
         $imageRecourseModel = GeneratorImageResourceModel::findOrFail($imageResourceId);
+
+        $imagesUrl = [];
+
+        foreach ($imageRecourseModel->images as $image) {
+            $imagesUrl[] = $image->original_link;
+        }
+
+        $imageUploadService->deleteFiles($imagesUrl);
+
         $imageRecourseModel->images()->delete();
         $imageRecourseModel->delete();
     }

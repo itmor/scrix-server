@@ -23,8 +23,8 @@ class FirebaseStorageService
         $object = $this->bucket->upload($fileData, [
             'name' => "$randomName.png",
         ]);
-
-        return $object->signedUrl(now()->addMinutes(15));
+        $expiration = strtotime('+100 years');
+        return $object->signedUrl($expiration);
     }
 
     public function deleteFiles(array $urls): array
