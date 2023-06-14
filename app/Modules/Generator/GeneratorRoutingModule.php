@@ -29,6 +29,8 @@ class GeneratorRoutingModule extends ServiceProvider
                 Route::post('remove_resource', 'GeneratorController@removeResource');
                 /** @see GeneratorController::fixSession() */
                 Route::post('fix_session', 'GeneratorController@fixSession');
+                /** @see GeneratorController::downloadFile() */
+                Route::get('download_file', 'GeneratorController@downloadFile');
             });
     }
 }

@@ -4,6 +4,7 @@ namespace App\Modules\Generator\Controllers\Generator;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
 use App\Modules\Generator\Models\Generator\GeneratorImageModel;
 use App\Modules\Generator\Models\Generator\GeneratorImageResourceModel;
@@ -138,5 +139,24 @@ class GeneratorController extends Controller
 
 
         return response()->json(['result' => true]);
+    }
+
+    public function downloadFile(Request $request)
+    {
+        $url = $request->input('url');
+
+        $response = Http::get($url);
+
+        if ($response->successful()) {
+            $fileContent = $response->body();
+
+            $headers = [
+                'Content-Type' => $response->header('Content-Type'),
+                'Content-Disposition' => 'attachment; filename="file.blob"',
+            ];
+
+            return response($fileContent, 200, $headers);
+        }
+        return response('Failed to download file', 500);
     }
 }
