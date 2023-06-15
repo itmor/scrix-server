@@ -125,7 +125,7 @@ class GeneratorController extends Controller
 
     public function fixSession()
     {
-        $models = GeneratorImageResourceModel::whereHas('images', function ($query) {
+        $modelsWithImages = GeneratorImageResourceModel::whereHas('images', function ($query) {
             $query->where('generator_image.generator_image_resource_id', '=', DB::raw('generator_image_resource.id'))
                 ->where('generator_image_resource.iteration_amount', '>', 1);
         })
@@ -134,11 +134,18 @@ class GeneratorController extends Controller
             ->with('images')
             ->get();
 
-        $models->each(function ($model) {
+        $modelsWithImages->each(function ($model) {
             $model->in_process = false;
             $model->save();
         });
 
+        $modelsWithoutImages = GeneratorImageResourceModel::whereDoesntHave('images')
+            ->get();
+
+        $modelsWithoutImages->each(function ($model) {
+            $model->in_process = 0;
+            $model->save();
+        });
 
         return response()->json(['result' => true]);
     }
