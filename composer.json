@@ -16,7 +16,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "kreait/laravel-firebase": "^5.2",
         "laravel/framework": "^9.0",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "ext-zip": "*"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^1.0",

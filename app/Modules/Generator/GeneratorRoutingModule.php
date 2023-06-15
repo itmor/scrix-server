@@ -31,6 +31,8 @@ class GeneratorRoutingModule extends ServiceProvider
                 Route::post('fix_session', 'GeneratorController@fixSession');
                 /** @see GeneratorController::downloadFile() */
                 Route::get('download_file', 'GeneratorController@downloadFile');
+                /** @see GeneratorController::downloadImages() */
+                Route::post('download_images', 'GeneratorController@downloadImages');
             });
     }
 }

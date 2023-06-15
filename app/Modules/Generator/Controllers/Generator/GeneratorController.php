@@ -5,6 +5,8 @@ namespace App\Modules\Generator\Controllers\Generator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use ZipArchive;
 use App\Http\Controllers\Controller;
 use App\Modules\Generator\Models\Generator\GeneratorImageModel;
 use App\Modules\Generator\Models\Generator\GeneratorImageResourceModel;
@@ -158,5 +160,27 @@ class GeneratorController extends Controller
             return response($fileContent, 200, $headers);
         }
         return response('Failed to download file', 500);
+    }
+
+    public function downloadImages(Request $request)
+    {
+        $zip = new ZipArchive();
+        $zipFileName = 'images' . time() . '.zip';
+        $zipPath = storage_path('app/public/' . $zipFileName);
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) !== TRUE) {
+            return response()->json(['error' => 'Unable to create zip file'], 500);
+        }
+
+        collect($request->input('urls'))->each(function ($url) use ($zip) {
+            $imageFile = @file_get_contents($url);
+            if ($imageFile !== FALSE) {
+                $zip->addFromString(Str::uuid()->toString() . '.png', $imageFile);
+            }
+        });
+
+        $zip->close();
+
+        return response()->json(['zipFile' => url('storage/' . $zipFileName)], 200);
     }
 }
